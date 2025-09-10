@@ -8,7 +8,7 @@ import { catchError, filter, retry, switchMap, tap } from 'rxjs/operators';
 import { ControlsOf } from '../models/controls-of';
 
 @Directive()
-export abstract class FilteredAbstractComponent<
+export abstract class FilteredAbstract<
   D,
   F extends Record<string, unknown> = Record<string, never>,
   T extends Record<string, unknown> = Record<string, never>,

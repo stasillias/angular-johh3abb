@@ -19,12 +19,12 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
-import { FilteredAbstractComponent } from '../../../shared/components/filtered-abstract.component';
-import { ControlsOf } from '../../../shared/models/controls-of';
-import { ReplaceDatesWithStrings } from '../../../shared/models/replace-dates-with-strings';
+import { FilteredAbstract } from '../shared/components/filtered-abstract';
+import { ControlsOf } from '../shared/models/controls-of';
+import { ReplaceDatesWithStrings } from '../shared/models/replace-dates-with-strings';
 import { ParamMap } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { DataValidationService } from '../../../shared/services/data-validation.service';
+import { DataValidationService } from '../shared/services/data-validation-service';
 
 enum PaymentType {
   Ep = 'ep',
@@ -46,8 +46,8 @@ type PaymentFiltersQueryParamsModel = ReplaceDatesWithStrings<PaymentFiltersMode
 
 @Component({
   selector: 'payments',
-  templateUrl: './payments.component.html',
-  styleUrl: './payments.component.scss',
+  templateUrl: './payments.html',
+  styleUrl: './payments.scss',
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -72,8 +72,8 @@ type PaymentFiltersQueryParamsModel = ReplaceDatesWithStrings<PaymentFiltersMode
   providers: [DatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PaymentsComponent
-  extends FilteredAbstractComponent<PaymentModel[], PaymentFiltersModel, PaymentFiltersQueryParamsModel>
+export class Payments
+  extends FilteredAbstract<PaymentModel[], PaymentFiltersModel, PaymentFiltersQueryParamsModel>
   implements OnInit
 {
   protected readonly PaymentType = PaymentType;

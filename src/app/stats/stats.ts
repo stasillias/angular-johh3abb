@@ -17,14 +17,14 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { delay, Observable, of } from 'rxjs';
 
-import { FilteredAbstractComponent } from '../../../shared/components/filtered-abstract.component';
-import { UiToggleGroupSingleDirective } from '../../../shared/directives/ui-toggle-group-single.directive';
+import { FilteredAbstract } from '../shared/components/filtered-abstract';
+import { UiToggleGroupSingle } from '../shared/directives/ui-toggle-group-single';
 
-import { ControlsOf } from '../../../shared/models/controls-of';
-import { ReplaceDatesWithStrings } from '../../../shared/models/replace-dates-with-strings';
+import { ControlsOf } from '../shared/models/controls-of';
+import { ReplaceDatesWithStrings } from '../shared/models/replace-dates-with-strings';
 import { ParamMap } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { DataValidationService } from '../../../shared/services/data-validation.service';
+import { DataValidationService } from '../shared/services/data-validation-service';
 
 type StatsModel = {};
 
@@ -39,8 +39,8 @@ type StatsFiltersQueryParamsModel = ReplaceDatesWithStrings<StatsFiltersModel>;
 
 @Component({
   selector: 'stats',
-  templateUrl: './stats.component.html',
-  styleUrls: ['./stats.component.scss'],
+  templateUrl: './stats.html',
+  styleUrls: ['./stats.scss'],
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -60,13 +60,13 @@ type StatsFiltersQueryParamsModel = ReplaceDatesWithStrings<StatsFiltersModel>;
     MatButtonToggle,
     MatNativeDateModule,
     MatProgressBarModule,
-    UiToggleGroupSingleDirective,
+    UiToggleGroupSingle,
   ],
   providers: [DatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StatsComponent
-  extends FilteredAbstractComponent<StatsModel[], StatsFiltersModel, StatsFiltersQueryParamsModel>
+export class Stats
+  extends FilteredAbstract<StatsModel[], StatsFiltersModel, StatsFiltersQueryParamsModel>
   implements OnInit
 {
   protected isCompareMode = signal<boolean>(false);

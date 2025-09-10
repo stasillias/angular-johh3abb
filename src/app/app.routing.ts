@@ -8,14 +8,14 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: 'stats',
-    loadComponent: () => import('./modules/stats/components/stats.component').then((m) => m.StatsComponent),
+    loadComponent: () => import('./stats/stats').then((m) => m.Stats),
   },
   {
     path: 'logger',
-    loadComponent: () => import('./modules/logger/components/logger.component').then((m) => m.LoggerComponent),
+    loadComponent: () => import('./logger/logger').then((m) => m.Logger),
   },
   {
     path: 'payment',
-    loadComponent: () => import('./modules/payment/components/payments.component').then((m) => m.PaymentsComponent),
+    loadComponent: () => import('./payment/payments').then((m) => m.Payments),
   },
 ];

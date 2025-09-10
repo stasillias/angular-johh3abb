@@ -9,7 +9,7 @@ import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-
 @Directive({
   selector: '[uiSingle]',
 })
-export class UiToggleGroupSingleDirective implements OnInit, AfterContentInit {
+export class UiToggleGroupSingle implements OnInit, AfterContentInit {
   private readonly hostToggleGroupComponent = inject(MatButtonToggleGroup, {
     host: true,
     self: true,

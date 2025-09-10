@@ -22,12 +22,12 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
-import { FilteredAbstractComponent } from '../../../shared/components/filtered-abstract.component';
-import { UiToggleGroupSingleDirective } from '../../../shared/directives/ui-toggle-group-single.directive';
+import { FilteredAbstract } from '../shared/components/filtered-abstract';
+import { UiToggleGroupSingle } from '../shared/directives/ui-toggle-group-single';
 
-import { ControlsOf } from '../../../shared/models/controls-of';
-import { ReplaceDatesWithStrings } from '../../../shared/models/replace-dates-with-strings';
-import { DataValidationService } from '../../../shared/services/data-validation.service';
+import { ControlsOf } from '../shared/models/controls-of';
+import { ReplaceDatesWithStrings } from '../shared/models/replace-dates-with-strings';
+import { DataValidationService } from '../shared/services/data-validation-service';
 
 type LoggerModel = {
   accountId: number;
@@ -48,8 +48,8 @@ type LoggerFiltersQueryParamsModel = ReplaceDatesWithStrings<LoggerFiltersModel>
 
 @Component({
   selector: 'logger',
-  templateUrl: './logger.component.html',
-  styleUrls: ['./logger.component.scss'],
+  templateUrl: './logger.html',
+  styleUrls: ['./logger.scss'],
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -71,13 +71,13 @@ type LoggerFiltersQueryParamsModel = ReplaceDatesWithStrings<LoggerFiltersModel>
     MatButtonToggle,
     MatNativeDateModule,
     MatProgressBarModule,
-    UiToggleGroupSingleDirective,
+    UiToggleGroupSingle,
   ],
   providers: [DatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoggerComponent
-  extends FilteredAbstractComponent<LoggerModel[], LoggerFiltersModel, LoggerFiltersQueryParamsModel>
+export class Logger
+  extends FilteredAbstract<LoggerModel[], LoggerFiltersModel, LoggerFiltersQueryParamsModel>
   implements OnInit
 {
   protected needFixCount = signal<number>(1);
