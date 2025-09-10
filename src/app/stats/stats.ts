@@ -73,7 +73,7 @@ export class Stats
 
   private readonly fb = inject(FormBuilder);
   private readonly datePipe = inject(DatePipe);
-  private readonly datesService = inject(DataValidationService);
+  private readonly dataValidationService = inject(DataValidationService);
 
   ngOnInit() {
     super.ngOnInit();
@@ -82,7 +82,7 @@ export class Stats
 
   protected createFilters(): FormGroup<ControlsOf<StatsFiltersModel>> {
     this.isCompareMode.set(
-      this.datesService.isValidDateString(this.activatedRoute.snapshot.queryParamMap.get('compareDateFrom')),
+      this.dataValidationService.isValidDateString(this.activatedRoute.snapshot.queryParamMap.get('compareDateFrom')),
     );
     const { dateFrom, dateTo, compareDateFrom, compareDateTo } = this.getDateValuesFromUrl();
     // дефолтні значення для фільтрів
@@ -132,7 +132,7 @@ export class Stats
     const keys = ['dateFrom', 'dateTo', 'compareDateFrom', 'compareDateTo'];
     keys.forEach((key) => {
       const date = params.get(key);
-      if (this.datesService.isValidDateString(date)) {
+      if (this.dataValidationService.isValidDateString(date)) {
         this.filterFormGroup.get(key).setValue(new Date(date), { emitEvent: false });
       }
     });
@@ -150,10 +150,10 @@ export class Stats
     const compareDateTo = this.activatedRoute.snapshot.queryParamMap.get('compareDateTo');
     // додано перевірку зачень дат введених в url на випадок, якщо юзер ввів невалідні дані
     return {
-      dateFrom: this.datesService.isValidDateString(dateFrom) ? new Date(dateFrom) : null,
-      dateTo: this.datesService.isValidDateString(dateTo) ? new Date(dateTo) : null,
-      compareDateFrom: this.datesService.isValidDateString(compareDateFrom) ? new Date(compareDateTo) : null,
-      compareDateTo: this.datesService.isValidDateString(compareDateTo) ? new Date(compareDateTo) : null,
+      dateFrom: this.dataValidationService.isValidDateString(dateFrom) ? new Date(dateFrom) : null,
+      dateTo: this.dataValidationService.isValidDateString(dateTo) ? new Date(dateTo) : null,
+      compareDateFrom: this.dataValidationService.isValidDateString(compareDateFrom) ? new Date(compareDateTo) : null,
+      compareDateTo: this.dataValidationService.isValidDateString(compareDateTo) ? new Date(compareDateTo) : null,
     };
   }
 }

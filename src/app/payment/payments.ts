@@ -76,11 +76,9 @@ export class Payments
   extends FilteredAbstract<PaymentModel[], PaymentFiltersModel, PaymentFiltersQueryParamsModel>
   implements OnInit
 {
-  protected readonly PaymentType = PaymentType;
-
   private readonly fb = inject(FormBuilder);
   private readonly datePipe = inject(DatePipe);
-  private readonly datesService = inject(DataValidationService);
+  private readonly dataValidationService = inject(DataValidationService);
 
   protected createFilters(): FormGroup<ControlsOf<PaymentFiltersModel>> {
     return this.fb.group<ControlsOf<PaymentFiltersModel>>({
@@ -112,19 +110,19 @@ export class Payments
     const type = params.get('type');
     const startDate = params.get('startDate');
     const endDate = params.get('endDate');
-    if (this.datesService.isValidInteger(accountId)) {
+    if (this.dataValidationService.isValidInteger(accountId)) {
       this.filterFormGroup.get('accountId').setValue(parseInt(accountId), { emitEvent: false });
     }
-    if (this.datesService.isValidInteger(userId)) {
+    if (this.dataValidationService.isValidInteger(userId)) {
       this.filterFormGroup.get('userId').setValue(parseInt(userId), { emitEvent: false });
     }
     if (type) {
       this.filterFormGroup.get('type').setValue(type as PaymentType, { emitEvent: false });
     }
-    if (this.datesService.isValidDateString(startDate)) {
+    if (this.dataValidationService.isValidDateString(startDate)) {
       this.filterFormGroup.get('startDate').setValue(new Date(startDate), { emitEvent: false });
     }
-    if (this.datesService.isValidDateString(endDate)) {
+    if (this.dataValidationService.isValidDateString(endDate)) {
       this.filterFormGroup.get('endDate').setValue(new Date(endDate), { emitEvent: false });
     }
   }

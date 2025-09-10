@@ -4,6 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { distinctUntilChanged, Observable, Subject, throwError, debounceTime } from 'rxjs';
 import { catchError, filter, retry, switchMap, tap } from 'rxjs/operators';
+import { isEqual } from 'lodash';
 
 import { ControlsOf } from '../models/controls-of';
 
@@ -65,7 +66,7 @@ export abstract class FilteredAbstract<
           return throwError(() => error);
         }),
         tap(() => this.isLoading.set(false)),
-        retry(),
+        retry(3),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((data) => this.data.set(data));
@@ -75,8 +76,7 @@ export abstract class FilteredAbstract<
     this.filterFormGroup.valueChanges
       .pipe(
         filter(() => this.filterFormGroup.valid),
-        distinctUntilChanged(),
-        retry(),
+        distinctUntilChanged((prev, curr) => isEqual(prev, curr)),
         tap(() => this.updateUrlWithFilterData()),
         takeUntilDestroyed(this.destroyRef),
       )

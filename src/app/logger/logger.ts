@@ -84,7 +84,7 @@ export class Logger
 
   private readonly fb = inject(FormBuilder);
   private readonly datePipe = inject(DatePipe);
-  private readonly datesService = inject(DataValidationService);
+  private readonly dataValidationService = inject(DataValidationService);
 
   protected createFilters(): FormGroup<ControlsOf<LoggerFiltersModel>> {
     return this.fb.group<ControlsOf<LoggerFiltersModel>>({
@@ -119,7 +119,7 @@ export class Logger
     const level = params.getAll('level');
     const createdDateFrom = params.get('createdDateFrom');
     const createdDateTo = params.get('createdDateTo');
-    if (this.datesService.isValidInteger(accountId)) {
+    if (this.dataValidationService.isValidInteger(accountId)) {
       this.filterFormGroup.get('accountId').setValue(parseInt(accountId), { emitEvent: false });
     }
     if (title) {
@@ -131,10 +131,10 @@ export class Logger
     if (level) {
       this.filterFormGroup.get('level').setValue(level, { emitEvent: false });
     }
-    if (this.datesService.isValidDateString(createdDateFrom)) {
+    if (this.dataValidationService.isValidDateString(createdDateFrom)) {
       this.filterFormGroup.get('createdDateFrom').setValue(new Date(createdDateFrom), { emitEvent: false });
     }
-    if (this.datesService.isValidDateString(createdDateTo)) {
+    if (this.dataValidationService.isValidDateString(createdDateTo)) {
       this.filterFormGroup.get('createdDateTo').setValue(new Date(createdDateTo), { emitEvent: false });
     }
   }
