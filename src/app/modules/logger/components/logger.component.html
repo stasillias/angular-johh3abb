@@ -39,16 +39,16 @@
 
     <mat-button-toggle-group multiple formControlName="level">
       @for (level of ['error', 'warning', 'info']; track level) {
-      <mat-button-toggle [value]="level">
-        {{ level }}
-      </mat-button-toggle>
+        <mat-button-toggle [value]="level">
+          {{ level }}
+        </mat-button-toggle>
       }
     </mat-button-toggle-group>
   </form>
 
   @if (isLoading()) {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   } @else {
-  <p>Тут будуть дані</p>
+    <p>Тут будуть дані</p>
   }
 </div>

@@ -1,14 +1,18 @@
 import { DestroyRef, Directive, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup } from '@angular/forms';
-import { delay, distinctUntilChanged, Observable, Subject, throwError } from 'rxjs';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { distinctUntilChanged, Observable, Subject, throwError, debounceTime } from 'rxjs';
 import { catchError, filter, retry, switchMap, tap } from 'rxjs/operators';
 
 import { ControlsOf } from '../models/controls-of';
 
 @Directive()
-export abstract class FilteredAbstractComponent<D, F extends Record<string, unknown> = Record<string, never>>
-  implements OnInit
+export abstract class FilteredAbstractComponent<
+  D,
+  F extends Record<string, unknown> = Record<string, never>,
+  T extends Record<string, unknown> = Record<string, never>,
+> implements OnInit
 {
   protected filterFormGroup: FormGroup<ControlsOf<F>>;
   private readonly dataUpdateRequested$ = new Subject<void>();
@@ -17,6 +21,8 @@ export abstract class FilteredAbstractComponent<D, F extends Record<string, unkn
   protected readonly data = signal<D>(null);
 
   protected readonly destroyRef = inject(DestroyRef);
+  protected readonly activatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   protected createFilters(): FormGroup<ControlsOf<F>> {
     return new FormGroup<ControlsOf<F>>({} as ControlsOf<F>);
@@ -24,9 +30,31 @@ export abstract class FilteredAbstractComponent<D, F extends Record<string, unkn
 
   protected abstract loadData(): Observable<D>;
 
+  protected abstract getQueryParamsFromFilterData(): T;
+
+  protected abstract setFilterValuesFromUrl(params: ParamMap): void;
+
   ngOnInit(): void {
     this.filterFormGroup = this.createFilters();
 
+    this.subscribeToDataUpdateRequest();
+    this.subscribeToFormValues();
+    this.subscribeToQueryParams();
+
+    // перше завантаження даних
+    this.dataUpdateRequested$.next(void 0);
+  }
+
+  protected updateUrlWithFilterData(): void {
+    const queryParams = this.getQueryParamsFromFilterData();
+    this.router.navigate([], {
+      queryParams,
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  private subscribeToDataUpdateRequest(): void {
     this.dataUpdateRequested$
       .asObservable()
       .pipe(
@@ -40,20 +68,24 @@ export abstract class FilteredAbstractComponent<D, F extends Record<string, unkn
         retry(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((data) => {
-        this.data.set(data);
-      });
+      .subscribe((data) => this.data.set(data));
+  }
 
+  private subscribeToFormValues(): void {
     this.filterFormGroup.valueChanges
       .pipe(
         filter(() => this.filterFormGroup.valid),
         distinctUntilChanged(),
         retry(),
+        tap(() => this.updateUrlWithFilterData()),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.dataUpdateRequested$.next(void 0));
+  }
 
-    // перше завантаження даних
-    this.dataUpdateRequested$.next(void 0);
+  private subscribeToQueryParams(): void {
+    this.activatedRoute.queryParamMap
+      .pipe(debounceTime(200), takeUntilDestroyed(this.destroyRef))
+      .subscribe((params: ParamMap) => this.setFilterValuesFromUrl(params));
   }
 }

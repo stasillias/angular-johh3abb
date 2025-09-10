@@ -21,14 +21,18 @@ import { delay } from 'rxjs/operators';
 
 import { FilteredAbstractComponent } from '../../../shared/components/filtered-abstract.component';
 import { ControlsOf } from '../../../shared/models/controls-of';
+import { ReplaceDatesWithStrings } from '../../../shared/models/replace-dates-with-strings';
+import { ParamMap } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { DataValidationService } from '../../../shared/services/data-validation.service';
 
-export enum PaymentType {
+enum PaymentType {
   Ep = 'ep',
   Epu = 'epu',
   Esv = 'esv',
 }
 
-export type PaymentModel = {
+type PaymentModel = {
   type: PaymentType;
   startDate: Date;
   endDate: Date;
@@ -36,10 +40,12 @@ export type PaymentModel = {
   accountId: number;
 };
 
-export type PaymentFiltersModel = Partial<PaymentModel>;
+type PaymentFiltersModel = Partial<PaymentModel>;
+
+type PaymentFiltersQueryParamsModel = ReplaceDatesWithStrings<PaymentFiltersModel>;
 
 @Component({
-  selector: 'payment-payments',
+  selector: 'payments',
   templateUrl: './payments.component.html',
   styleUrl: './payments.component.scss',
   imports: [
@@ -63,15 +69,18 @@ export type PaymentFiltersModel = Partial<PaymentModel>;
     MatNativeDateModule,
     MatProgressBarModule,
   ],
+  providers: [DatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaymentsComponent
-  extends FilteredAbstractComponent<PaymentModel[], PaymentFiltersModel>
+  extends FilteredAbstractComponent<PaymentModel[], PaymentFiltersModel, PaymentFiltersQueryParamsModel>
   implements OnInit
 {
   protected readonly PaymentType = PaymentType;
 
   private readonly fb = inject(FormBuilder);
+  private readonly datePipe = inject(DatePipe);
+  private readonly datesService = inject(DataValidationService);
 
   protected createFilters(): FormGroup<ControlsOf<PaymentFiltersModel>> {
     return this.fb.group<ControlsOf<PaymentFiltersModel>>({
@@ -85,5 +94,38 @@ export class PaymentsComponent
 
   protected loadData(): Observable<PaymentModel[]> {
     return of([]).pipe(delay(500));
+  }
+
+  protected getQueryParamsFromFilterData(): PaymentFiltersQueryParamsModel {
+    return {
+      accountId: this.filterFormGroup.value.accountId,
+      userId: this.filterFormGroup.value.userId,
+      type: this.filterFormGroup.value.type,
+      startDate: this.datePipe.transform(this.filterFormGroup.value.startDate, 'yyyy-MM-dd'),
+      endDate: this.datePipe.transform(this.filterFormGroup.value.endDate, 'yyyy-MM-dd'),
+    };
+  }
+
+  protected setFilterValuesFromUrl(params: ParamMap): void {
+    const accountId = params.get('accountId');
+    const userId = params.get('userId');
+    const type = params.get('type');
+    const startDate = params.get('startDate');
+    const endDate = params.get('endDate');
+    if (this.datesService.isValidInteger(accountId)) {
+      this.filterFormGroup.get('accountId').setValue(parseInt(accountId), { emitEvent: false });
+    }
+    if (this.datesService.isValidInteger(userId)) {
+      this.filterFormGroup.get('userId').setValue(parseInt(userId), { emitEvent: false });
+    }
+    if (type) {
+      this.filterFormGroup.get('type').setValue(type as PaymentType, { emitEvent: false });
+    }
+    if (this.datesService.isValidDateString(startDate)) {
+      this.filterFormGroup.get('startDate').setValue(new Date(startDate), { emitEvent: false });
+    }
+    if (this.datesService.isValidDateString(endDate)) {
+      this.filterFormGroup.get('endDate').setValue(new Date(endDate), { emitEvent: false });
+    }
   }
 }
