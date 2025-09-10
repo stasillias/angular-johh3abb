@@ -2,7 +2,7 @@ import { DestroyRef, Directive, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { distinctUntilChanged, Observable, Subject, throwError, debounceTime } from 'rxjs';
+import { distinctUntilChanged, Observable, Subject, throwError } from 'rxjs';
 import { catchError, filter, retry, switchMap, tap } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 
@@ -85,7 +85,7 @@ export abstract class FilteredAbstract<
 
   private subscribeToQueryParams(): void {
     this.activatedRoute.queryParamMap
-      .pipe(debounceTime(200), takeUntilDestroyed(this.destroyRef))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params: ParamMap) => this.setFilterValuesFromUrl(params));
   }
 }
